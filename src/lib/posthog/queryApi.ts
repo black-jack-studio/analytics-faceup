@@ -10,7 +10,13 @@
  * forwards the HogQL string. Nothing else in this file needs to change.
  */
 
-const host = import.meta.env.VITE_POSTHOG_HOST
+// The Query API lives on the app host (e.g. eu.posthog.com), not the ingestion-only host
+// used for capture (eu.i.posthog.com, VITE_POSTHOG_HOST) — they're different subdomains on
+// PostHog Cloud. Falls back to deriving it from VITE_POSTHOG_HOST if VITE_POSTHOG_API_HOST
+// isn't set, by stripping the capture subdomain's leading "i.".
+const explicitApiHost = import.meta.env.VITE_POSTHOG_API_HOST
+const captureHost = import.meta.env.VITE_POSTHOG_HOST
+const host = explicitApiHost || captureHost?.replace('://eu.i.', '://eu.').replace('://us.i.', '://us.')
 const projectId = import.meta.env.VITE_POSTHOG_PROJECT_ID
 const personalApiKey = import.meta.env.VITE_POSTHOG_PERSONAL_API_KEY
 
@@ -26,8 +32,8 @@ export async function runHogQLQuery<Row extends unknown[] = unknown[]>(
 ): Promise<HogQLResult<Row>> {
   if (!isPostHogQueryConfigured) {
     throw new Error(
-      'PostHog query API not configured. Set VITE_POSTHOG_HOST, VITE_POSTHOG_PROJECT_ID, ' +
-        'VITE_POSTHOG_PERSONAL_API_KEY in .env.local.',
+      'PostHog query API not configured. Set VITE_POSTHOG_HOST (or VITE_POSTHOG_API_HOST), ' +
+        'VITE_POSTHOG_PROJECT_ID, VITE_POSTHOG_PERSONAL_API_KEY in .env.local.',
     )
   }
 
