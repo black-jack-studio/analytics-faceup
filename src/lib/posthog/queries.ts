@@ -68,20 +68,18 @@ export async function fetchButtonClickStats(limit = 20): Promise<ButtonClickStat
 export async function fetchDropOffFunnel(triggerEvent: string): Promise<FunnelStep[]> {
   const { results } = await runHogQLQuery<[string, number]>(`
     WITH triggered AS (
-      SELECT DISTINCT person_id
+      SELECT person_id, max(timestamp) AS last_trigger_at
       FROM events
       WHERE event = '${triggerEvent}'
         AND timestamp >= now() - INTERVAL ${LOOKBACK_DAYS} DAY
+      GROUP BY person_id
     ),
     returned AS (
       SELECT DISTINCT e.person_id
       FROM events e
       JOIN triggered t ON e.person_id = t.person_id
       WHERE e.event = '${POSTHOG_EVENTS.sessionStart}'
-        AND e.timestamp > (
-          SELECT max(timestamp) FROM events
-          WHERE event = '${triggerEvent}' AND person_id = e.person_id
-        )
+        AND e.timestamp > t.last_trigger_at
     ),
     deleted AS (
       SELECT DISTINCT e.person_id
