@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import 'tailwindcss';
+
+/* Design tokens ported from faceup-server's client/src/index.css so the dashboard matches
+   the game app's look. Kept dark-only (this is an internal tool, not the game UI) rather than
+   porting the light `:root` block too. */
+:root {
+  color-scheme: dark;
+  --ink: #000000;
+  --card-dark: #111214;
+  --border-soft: rgba(255, 255, 255, 0.1);
+  --accent-green: #b5f3c7;
+  --accent-purple: #b79cff;
+  --accent-blue: #8ccbff;
+  --accent-gold: #f8ca5a;
+  --accent-rose: #ff9cb5;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: var(--ink);
+  color: #ebebeb;
+}
+
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
