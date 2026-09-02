@@ -18,12 +18,20 @@ export const POSTHOG_EVENTS = {
 
 const LOOKBACK_DAYS = 30
 
+// The dashboard itself briefly sent autocapture/pageview events into this same
+// PostHog project (fixed since). Exclude its host from any query that isn't
+// already scoped to a game-specific event name, so old polluted rows don't
+// leak into the numbers.
+const DASHBOARD_HOST = 'analytics-faceup.vercel.app'
+const EXCLUDE_DASHBOARD_HOST = `(properties.$host IS NULL OR properties.$host NOT LIKE '%${DASHBOARD_HOST}%')`
+
 /** Average session length in minutes, using PostHog's built-in session model. */
 export async function fetchAvgSessionMinutes(): Promise<number | null> {
   const { results } = await runHogQLQuery<[number | null]>(`
     SELECT avg(session.duration) / 60
     FROM events
     WHERE timestamp >= now() - INTERVAL ${LOOKBACK_DAYS} DAY
+      AND ${EXCLUDE_DASHBOARD_HOST}
   `)
   return results[0]?.[0] ?? null
 }
@@ -52,6 +60,7 @@ export async function fetchButtonClickStats(limit = 20): Promise<ButtonClickStat
     FROM events
     WHERE event = '$autocapture'
       AND timestamp >= now() - INTERVAL ${LOOKBACK_DAYS} DAY
+      AND ${EXCLUDE_DASHBOARD_HOST}
     GROUP BY event, label
     ORDER BY clicks DESC
     LIMIT ${limit}
