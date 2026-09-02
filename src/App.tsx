@@ -1,8 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useEffect } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { TrackingSegmentProvider } from '@/context/TrackingSegmentContext'
-import { initPostHog } from '@/lib/posthog/client'
 import { BehaviorPage } from '@/pages/BehaviorPage'
 import { EconomyPage } from '@/pages/EconomyPage'
 import { GameplayPage } from '@/pages/GameplayPage'
@@ -22,10 +20,6 @@ const queryClient = new QueryClient({
 })
 
 export default function App() {
-  useEffect(() => {
-    initPostHog()
-  }, [])
-
   return (
     <QueryClientProvider client={queryClient}>
       <TrackingSegmentProvider>

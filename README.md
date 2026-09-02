@@ -12,7 +12,7 @@ consentement ATT) pour le jeu FaceUp (Blackjack).
 - **Recharts** pour les graphiques
 - **React Router** pour la navigation entre sections
 - **@supabase/supabase-js** en lecture seule
-- **posthog-js** (capture) + **PostHog Query API / HogQL** (lecture)
+- **PostHog Query API / HogQL** (lecture seule — ce dashboard ne capture jamais ses propres événements)
 
 ## Démarrage
 
@@ -36,8 +36,7 @@ src/
         economy.ts         # flux coins/gems, impact des pubs sur la rétention
         games.ts            # cross-check "quitte après un all-in perdu"
     posthog/
-      client.ts        # init posthog-js (capture côté client)
-      queryApi.ts        # wrapper HogQL générique (voir sécurité ci-dessous)
+      queryApi.ts        # wrapper HogQL générique (voir sécurité ci-dessous, lecture seule)
       queries.ts          # requêtes HogQL typées : ATT, heatmap boutons, funnels
     utils.ts            # cn(), formatNumber(), formatPct()
   types/domain.ts       # types métier partagés par les hooks/composants
