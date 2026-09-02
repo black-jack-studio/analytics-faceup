@@ -63,11 +63,18 @@ function cleanElementLabel(raw: string, maxLen = 50): string {
   const looksLikeChain = raw.includes('attr__') || /;[a-zA-Z]/.test(raw)
   if (!looksLikeChain) return raw.length > maxLen ? `${raw.slice(0, maxLen - 1)}…` : raw
 
+  // elements_chain lists the clicked element FIRST, followed by its ancestors — only look at
+  // that first segment, otherwise an ancestor's id/text (e.g. the app's root <div id="root">)
+  // gets picked up instead of the element that was actually clicked.
+  const clickedElement = raw.split(';')[0]
+
   const candidate =
-    raw.match(/text="([^"]+)"/)?.[1] ??
-    raw.match(/attr__aria-label="([^"]+)"/)?.[1] ??
-    raw.match(/attr__id="([^"]+)"/)?.[1] ??
-    raw.split(/[:;]/)[0]
+    clickedElement.match(/text="([^"]+)"/)?.[1] ??
+    clickedElement.match(/attr__aria-label="([^"]+)"/)?.[1] ??
+    clickedElement.match(/attr__id="([^"]+)"/)?.[1] ??
+    // No text/label/id on the clicked element itself (e.g. an icon-only button) — fall back
+    // to just its tag name rather than the full class list, which reads as noise.
+    clickedElement.split(/[:.]/)[0]
 
   if (!candidate) return '(élément)'
   return candidate.length > maxLen ? `${candidate.slice(0, maxLen - 1)}…` : candidate
