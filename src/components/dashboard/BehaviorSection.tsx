@@ -89,16 +89,18 @@ export function BehaviorSection() {
           {buttonClicks.error ? (
             <ErrorState error={buttonClicks.error} />
           ) : (
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={buttonClicks.data ?? []} layout="vertical" margin={{ left: 24 }}>
-                  <CartesianGrid strokeDasharray="3 3" horizontal={false} />
-                  <XAxis type="number" hide />
-                  <YAxis type="category" dataKey="label" width={140} tick={{ fontSize: 11 }} />
-                  <Tooltip formatter={(value) => formatNumber(Number(value))} />
-                  <Bar dataKey="clicks" fill="#4f46e5" radius={[0, 4, 4, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
+            <div className="h-64 overflow-y-auto overflow-x-hidden pr-1">
+              <div style={{ height: Math.max((buttonClicks.data?.length ?? 0) * 32, 256) }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={buttonClicks.data ?? []} layout="vertical" margin={{ left: 24, right: 16 }}>
+                    <CartesianGrid strokeDasharray="3 3" horizontal={false} />
+                    <XAxis type="number" hide />
+                    <YAxis type="category" dataKey="label" width={140} tick={{ fontSize: 11 }} interval={0} />
+                    <Tooltip formatter={(value) => formatNumber(Number(value))} />
+                    <Bar dataKey="clicks" fill="#4f46e5" radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           )}
         </Card>

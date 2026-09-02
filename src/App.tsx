@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { PlayerProfileProvider } from '@/context/PlayerProfileContext'
 import { TrackingSegmentProvider } from '@/context/TrackingSegmentContext'
 import { BehaviorPage } from '@/pages/BehaviorPage'
 import { EconomyPage } from '@/pages/EconomyPage'
@@ -23,18 +24,20 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TrackingSegmentProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<OverviewPage />} />
-            <Route path="/behavior" element={<BehaviorPage />} />
-            <Route path="/economy" element={<EconomyPage />} />
-            <Route path="/gameplay" element={<GameplayPage />} />
-            <Route path="/retention" element={<RetentionPage />} />
-            <Route path="/growth" element={<GrowthPage />} />
-            <Route path="/trust-safety" element={<TrustSafetyPage />} />
-            <Route path="/live-ops" element={<LiveOpsPage />} />
-          </Routes>
-        </BrowserRouter>
+        <PlayerProfileProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<OverviewPage />} />
+              <Route path="/behavior" element={<BehaviorPage />} />
+              <Route path="/economy" element={<EconomyPage />} />
+              <Route path="/gameplay" element={<GameplayPage />} />
+              <Route path="/retention" element={<RetentionPage />} />
+              <Route path="/growth" element={<GrowthPage />} />
+              <Route path="/trust-safety" element={<TrustSafetyPage />} />
+              <Route path="/live-ops" element={<LiveOpsPage />} />
+            </Routes>
+          </BrowserRouter>
+        </PlayerProfileProvider>
       </TrackingSegmentProvider>
     </QueryClientProvider>
   )

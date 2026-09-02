@@ -53,6 +53,26 @@ export async function fetchAttConsentMetrics(): Promise<AttConsentMetrics> {
   }
 }
 
+/**
+ * Turns a raw PostHog `elements_chain` (a semicolon-separated CSS-selector-like blob,
+ * e.g. `a.btn:attr__href="/x"nth-child="2"text="Play Now";div.container:...`) into a short
+ * human-readable label. Falls back to plain text as-is when it isn't a chain at all.
+ */
+function cleanElementLabel(raw: string, maxLen = 50): string {
+  if (!raw) return '(sans nom)'
+  const looksLikeChain = raw.includes('attr__') || /;[a-zA-Z]/.test(raw)
+  if (!looksLikeChain) return raw.length > maxLen ? `${raw.slice(0, maxLen - 1)}…` : raw
+
+  const candidate =
+    raw.match(/text="([^"]+)"/)?.[1] ??
+    raw.match(/attr__aria-label="([^"]+)"/)?.[1] ??
+    raw.match(/attr__id="([^"]+)"/)?.[1] ??
+    raw.split(/[:;]/)[0]
+
+  if (!candidate) return '(élément)'
+  return candidate.length > maxLen ? `${candidate.slice(0, maxLen - 1)}…` : candidate
+}
+
 /** Most/least clicked elements app-wide, from PostHog autocapture. */
 export async function fetchButtonClickStats(limit = 20): Promise<ButtonClickStat[]> {
   const { results } = await runHogQLQuery<[string, string, number]>(`
@@ -63,10 +83,22 @@ export async function fetchButtonClickStats(limit = 20): Promise<ButtonClickStat
       AND ${EXCLUDE_DASHBOARD_HOST}
     GROUP BY event, label
     ORDER BY clicks DESC
-    LIMIT ${limit}
+    LIMIT ${limit * 3}
   `)
 
-  return results.map(([eventName, label, clicks]) => ({ eventName, label, clicks }))
+  const merged = new Map<string, { eventName: string; label: string; clicks: number }>()
+  for (const [eventName, rawLabel, clicks] of results) {
+    const label = cleanElementLabel(rawLabel)
+    const key = `${eventName}::${label}`
+    const existing = merged.get(key)
+    if (existing) {
+      existing.clicks += clicks
+    } else {
+      merged.set(key, { eventName, label, clicks })
+    }
+  }
+
+  return [...merged.values()].sort((a, b) => b.clicks - a.clicks).slice(0, limit)
 }
 
 /**

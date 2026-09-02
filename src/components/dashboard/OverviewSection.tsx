@@ -4,6 +4,7 @@ import { Card, CardHeader } from '@/components/ui/Card'
 import { ErrorState } from '@/components/ui/EmptyState'
 import { StatCard } from '@/components/ui/StatCard'
 import { UserAvatar } from '@/components/ui/UserAvatar'
+import { usePlayerProfileModal } from '@/context/PlayerProfileContext'
 import { useTrackingSegment } from '@/context/TrackingSegmentContext'
 import { useAvgSessionMinutes, useOverviewMetrics, useRecentUsers } from '@/hooks/useOverviewMetrics'
 import { formatNumber } from '@/lib/utils'
@@ -16,6 +17,7 @@ export function OverviewSection() {
   const { data, isLoading, error } = useOverviewMetrics(segment)
   const { data: avgSessionMinutes, isLoading: sessionLoading } = useAvgSessionMinutes()
   const recentUsers = useRecentUsers()
+  const { openProfile } = usePlayerProfileModal()
 
   if (error) return <ErrorState error={error} />
 
@@ -87,9 +89,12 @@ export function OverviewSection() {
               ).map((user: RecentUser | undefined, index) => {
                 const u = user
                 return (
-                  <div
+                  <button
+                    type="button"
                     key={u?.id ?? index}
-                    className="flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-white/5"
+                    onClick={() => u && openProfile(u.id)}
+                    disabled={!u}
+                    className="flex items-center gap-3 rounded-lg px-2 py-2 text-left hover:bg-white/5 disabled:cursor-default"
                   >
                     <UserAvatar selectedAvatarId={u?.selectedAvatarId} size={32} />
                     <div className="min-w-0 flex-1">
@@ -105,7 +110,7 @@ export function OverviewSection() {
                         PREMIUM
                       </span>
                     )}
-                  </div>
+                  </button>
                 )
               })}
               {recentUsers.data && recentUsers.data.length === 0 && (

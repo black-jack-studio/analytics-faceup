@@ -3,6 +3,7 @@ import { Card, CardHeader } from '@/components/ui/Card'
 import { ErrorState } from '@/components/ui/EmptyState'
 import { StatCard } from '@/components/ui/StatCard'
 import { UserAvatar } from '@/components/ui/UserAvatar'
+import { usePlayerProfileModal } from '@/context/PlayerProfileContext'
 import {
   useAdImpact,
   useChurnSummary,
@@ -23,6 +24,7 @@ export function EconomySection() {
   const gemSpend = useGemSpendByItemType()
   const whales = useWhales()
   const conversion = useConversionCohorts()
+  const { openProfile } = usePlayerProfileModal()
 
   const coins = flows.data?.find((f) => f.currency === 'coins')
   const gems = flows.data?.find((f) => f.currency === 'gems')
@@ -157,7 +159,12 @@ export function EconomySection() {
         ) : (
           <div className="flex flex-col gap-1">
             {(whales.data ?? []).map((w, index) => (
-              <div key={w.userId} className="flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-white/5">
+              <button
+                type="button"
+                key={w.userId}
+                onClick={() => openProfile(w.userId)}
+                className="flex items-center gap-3 rounded-lg px-2 py-2 text-left hover:bg-white/5"
+              >
                 <span className="w-5 text-xs font-medium text-white/40">#{index + 1}</span>
                 <UserAvatar selectedAvatarId={w.selectedAvatarId} size={28} />
                 <div className="min-w-0 flex-1">
@@ -168,7 +175,7 @@ export function EconomySection() {
                   <Crown className="h-3.5 w-3.5" />
                   {formatNumber(w.totalGemsSpent)} gems
                 </div>
-              </div>
+              </button>
             ))}
             {whales.data && whales.data.length === 0 && (
               <p className="text-sm text-white/40">Aucun achat gemmes enregistré.</p>
