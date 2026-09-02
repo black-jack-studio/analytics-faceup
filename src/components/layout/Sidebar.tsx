@@ -1,16 +1,46 @@
-import { LayoutDashboard, MousePointerClick, Coins, Shield } from 'lucide-react'
+import {
+  Activity,
+  Coins,
+  Dice5,
+  LayoutDashboard,
+  MousePointerClick,
+  Shield,
+  ShieldAlert,
+  TrendingUp,
+  Users2,
+} from 'lucide-react'
 import { NavLink } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 
-const NAV_ITEMS = [
-  { to: '/', label: "Vue d'ensemble", icon: LayoutDashboard, end: true },
-  { to: '/behavior', label: 'Comportement & Funnels', icon: MousePointerClick, end: false },
-  { to: '/economy', label: 'Économie & Monétisation', icon: Coins, end: false },
+const NAV_GROUPS = [
+  {
+    label: 'Joueurs',
+    items: [
+      { to: '/', label: "Vue d'ensemble", icon: LayoutDashboard, end: true },
+      { to: '/behavior', label: 'Comportement & Funnels', icon: MousePointerClick, end: false },
+      { to: '/gameplay', label: 'Gameplay & Compétence', icon: Dice5, end: false },
+      { to: '/retention', label: 'Progression & Rétention', icon: TrendingUp, end: false },
+    ],
+  },
+  {
+    label: 'Business',
+    items: [
+      { to: '/economy', label: 'Économie & Monétisation', icon: Coins, end: false },
+      { to: '/growth', label: 'Croissance & Parrainage', icon: Users2, end: false },
+    ],
+  },
+  {
+    label: 'Opérations',
+    items: [
+      { to: '/trust-safety', label: 'Trust & Safety', icon: ShieldAlert, end: false },
+      { to: '/live-ops', label: 'Live Ops', icon: Activity, end: false },
+    ],
+  },
 ] as const
 
 export function Sidebar() {
   return (
-    <aside className="flex w-60 shrink-0 flex-col border-r border-white/10 bg-black px-3 py-5">
+    <aside className="flex w-64 shrink-0 flex-col overflow-y-auto border-r border-white/10 bg-black px-3 py-5">
       <div className="mb-6 flex items-center gap-2 px-2">
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#B79CFF] to-[#8CCBFF] text-sm font-bold text-black">
           FU
@@ -21,22 +51,27 @@ export function Sidebar() {
         </div>
       </div>
 
-      <nav className="flex flex-1 flex-col gap-1">
-        {NAV_ITEMS.map(({ to, label, icon: Icon, end }) => (
-          <NavLink
-            key={to}
-            to={to}
-            end={end}
-            className={({ isActive }) =>
-              cn(
-                'flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                isActive ? 'bg-[#B79CFF]/10 text-[#B79CFF]' : 'text-white/60 hover:bg-white/5 hover:text-white',
-              )
-            }
-          >
-            <Icon className="h-4 w-4" />
-            {label}
-          </NavLink>
+      <nav className="flex flex-1 flex-col gap-4">
+        {NAV_GROUPS.map((group) => (
+          <div key={group.label} className="flex flex-col gap-1">
+            <p className="px-3 text-[10px] font-semibold uppercase tracking-wider text-white/30">{group.label}</p>
+            {group.items.map(({ to, label, icon: Icon, end }) => (
+              <NavLink
+                key={to}
+                to={to}
+                end={end}
+                className={({ isActive }) =>
+                  cn(
+                    'flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                    isActive ? 'bg-[#B79CFF]/10 text-[#B79CFF]' : 'text-white/60 hover:bg-white/5 hover:text-white',
+                  )
+                }
+              >
+                <Icon className="h-4 w-4" />
+                {label}
+              </NavLink>
+            ))}
+          </div>
         ))}
       </nav>
 

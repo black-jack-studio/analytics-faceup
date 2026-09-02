@@ -36,6 +36,15 @@ export interface Database {
         subscription_plan: string | null
         all_in_lose_streak: number | null
         privacy_settings: { dataCollection?: boolean } | null
+        level: number | null
+        xp: number | null
+        season_xp: number | null
+        current_streak_classic: number | null
+        current_day_streak: number | null
+        longest_day_streak: number | null
+        referral_code: string | null
+        referred_by: string | null
+        referral_count: number | null
       }>
       gem_transactions: Table<{
         id: string
@@ -43,6 +52,82 @@ export interface Database {
         transaction_type: 'purchase' | 'reward' | 'spend' | 'refund'
         amount: number
         description: string
+        created_at: string | null
+      }>
+      gem_purchases: Table<{
+        id: string
+        user_id: string
+        item_type: 'avatar' | 'theme' | 'card_back' | 'coins' | 'boost'
+        item_id: string
+        gem_cost: number
+        purchased_at: string | null
+      }>
+      game_stats: Table<{
+        id: string
+        user_id: string
+        game_type: 'practice' | 'cash' | 'counting'
+        hands_played: number | null
+        hands_won: number | null
+        hands_lost: number | null
+        hands_pushed: number | null
+        total_winnings: number | null
+        total_losses: number | null
+        blackjacks: number | null
+        busts: number | null
+        correct_decisions: number | null
+        total_decisions: number | null
+      }>
+      seasons: Table<{
+        id: string
+        name: string
+        start_date: string
+        end_date: string
+        max_xp: number | null
+        is_active: boolean | null
+      }>
+      classic_streak_leaderboard: Table<{
+        id: string
+        user_id: string
+        week_start_date: string
+        best_streak: number
+      }>
+      weekly_xp_leaderboard: Table<{
+        id: string
+        user_id: string
+        week_start_date: string
+        weekly_xp: number
+      }>
+      user_reports: Table<{
+        id: string
+        reporter_id: string
+        reported_id: string
+        reason: string
+        created_at: string | null
+      }>
+      blocked_users: Table<{
+        id: string
+        blocker_id: string
+        blocked_id: string
+        created_at: string | null
+      }>
+      active_games: Table<{
+        id: string
+        user_id: string
+        mode: string
+        status: 'in_progress' | 'completed'
+        created_at: string | null
+      }>
+      game_tables: Table<{
+        id: string
+        host_user_id: string
+        mode: string
+        status: 'waiting' | 'betting' | 'in_progress' | 'closed'
+        created_at: string | null
+      }>
+      table_invites: Table<{
+        id: string
+        table_id: string
+        status: 'pending' | 'accepted' | 'declined' | 'expired'
         created_at: string | null
       }>
     }
@@ -53,3 +138,6 @@ export interface Database {
 
 export type UserRow = Database['public']['Tables']['users']['Row']
 export type GemTransactionRow = Database['public']['Tables']['gem_transactions']['Row']
+export type GemPurchaseRow = Database['public']['Tables']['gem_purchases']['Row']
+export type GameStatsRow = Database['public']['Tables']['game_stats']['Row']
+export type SeasonRow = Database['public']['Tables']['seasons']['Row']

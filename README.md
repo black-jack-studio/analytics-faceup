@@ -57,13 +57,33 @@ peut être déplacée vers une autre page sans dépendance cachée.
 
 ## Sections livrées
 
+**Joueurs**
 1. **Vue d'ensemble** (`/`) — inscrits, actifs/inactifs, gratuits/premium (Supabase),
-   durée moyenne de session (PostHog).
+   durée moyenne de session (PostHog), derniers utilisateurs inscrits (avec avatar).
 2. **Comportement & Funnels** (`/behavior`) — consentement ATT, boutons les plus
    cliqués (autocapture), funnels de fuite après un événement de jeu (all-in perdu,
    défaites consécutives) jusqu'à la suppression de compte.
-3. **Économie & Monétisation** (`/economy`) — flux coins/gems, impact des pubs
-   visionnées sur la rétention D7, churn des abonnements et raisons de résiliation.
+3. **Gameplay & Compétence** (`/gameplay`) — précision de stratégie de base
+   (`game_stats.correct_decisions/total_decisions`), taux de victoire/bust/blackjack
+   par mode de jeu.
+4. **Progression & Rétention** (`/retention`) — rétention par cohorte d'inscription
+   (D1/D7/D30, proxy `last_active_at`), distribution des niveaux, des streaks
+   quotidiens, progression Battle Pass de la saison active.
+
+**Business**
+5. **Économie & Monétisation** (`/economy`) — flux coins/gems, impact des pubs
+   visionnées sur la rétention D7, churn des abonnements et raisons de résiliation,
+   répartition des achats gemmes par type d'objet, conversion Premium par cohorte,
+   top 10 des "whales" (plus gros dépensiers).
+6. **Croissance & Parrainage** (`/growth`) — funnel de parrainage (parraineurs actifs,
+   filleuls, conversion Premium des filleuls), participation aux classements
+   hebdomadaires (streak Classic, XP).
+
+**Opérations**
+7. **Trust & Safety** (`/trust-safety`) — volume de signalements et blocages (30j),
+   principales raisons de signalement.
+8. **Live Ops** (`/live-ops`) — parties solo en cours, tables entre amis par statut,
+   taux d'acceptation des invitations.
 
 Le sélecteur **Tous / Trackés / Anonymes** dans la barre supérieure segmente toutes
 les requêtes Supabase via `users.privacy_settings->>dataCollection` (pas de colonne
